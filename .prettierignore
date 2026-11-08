@@ -1,0 +1,11 @@
+dist/
+node_modules/
+coverage/
+test-results/
+playwright-report/
+public/vendor/
+**/vendor/
+public/engine/*.wasm
+pnpm-lock.yaml
+*.tsbuildinfo
+design/

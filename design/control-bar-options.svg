@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1030" role="img" aria-labelledby="title description">
+  <title id="title">CW Player bottom control bar redesign options</title>
+  <desc id="description">Three dark-theme concepts for the CW Player bottom dock, showing title, progress, transport, sound settings, and more actions.</desc>
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b5d1ff"/>
+      <stop offset="1" stop-color="#8eb8ff"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity=".3"/>
+    </filter>
+    <g id="play" fill="currentColor">
+      <path d="M8 5v14l11-7z"/>
+    </g>
+    <g id="pause" fill="currentColor">
+      <path d="M6 5h4v14H6zm8 0h4v14h-4z"/>
+    </g>
+    <g id="stop" fill="currentColor">
+      <path d="M6 6h12v12H6z"/>
+    </g>
+    <g id="settings" fill="currentColor">
+      <path d="M19.14 12.94c.04-.31.06-.62.06-.94s-.02-.63-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.1 7.1 0 0 0-1.63-.95l-.36-2.54a.49.49 0 0 0-.49-.42h-3.84a.49.49 0 0 0-.49.42L9.2 5.31c-.6.23-1.14.55-1.63.95l-2.39-.96a.49.49 0 0 0-.6.22L2.66 8.84a.5.5 0 0 0 .12.64l2.02 1.58a6.1 6.1 0 0 0 0 1.88l-2.02 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.12.2.36.29.6.22l2.39-.96c.49.4 1.04.72 1.63.95l.36 2.54c.04.24.24.42.49.42h3.84c.25 0 .45-.18.49-.42l.36-2.54c.59-.23 1.14-.55 1.63-.95l2.39.96c.23.09.48 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7"/>
+    </g>
+    <g id="more" fill="currentColor">
+      <circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
+    </g>
+  </defs>
+
+  <rect width="1600" height="1030" fill="#10151c"/>
+  <text x="76" y="61" fill="#a4c7ff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="3">CW PLAYER · CONTROL BAR STUDY</text>
+  <text x="76" y="103" fill="#eef2f8" font-family="Inter, system-ui, sans-serif" font-size="30" font-weight="650">Three calmer bottom-player layouts</text>
+  <text x="76" y="128" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="14">Dark theme · paused state · same track and actions in each concept</text>
+
+  <!-- Option 1 -->
+  <text x="76" y="169" fill="#a4c7ff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="2">01 · CENTERED TRANSPORT</text>
+  <text x="1524" y="169" text-anchor="end" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="12">Keep the familiar full-width dock; shorten the timeline</text>
+  <rect x="76" y="185" width="1448" height="210" rx="16" fill="#1a202a" stroke="#354255"/>
+  <rect x="650" y="208" width="300" height="4" rx="2" fill="#39465b"/>
+  <rect x="650" y="208" width="56" height="4" rx="2" fill="#a4c7ff"/>
+  <circle cx="706" cy="210" r="4" fill="#a4c7ff"/>
+  <text x="650" y="230" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">0:00:06</text>
+  <text x="950" y="230" text-anchor="end" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">1:01:56</text>
+  <text x="112" y="293" fill="#eef2f8" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="650">03 Reisen til Island</text>
+  <text x="112" y="316" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="12">Norwegian · Chapter 3 of 6</text>
+  <text x="800" y="261" text-anchor="middle" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">Paused</text>
+  <circle cx="766" cy="300" r="24" fill="#242e3c" stroke="#354255"/>
+  <use href="#stop" x="754" y="288" width="24" height="24" color="#d5ddea"/>
+  <circle cx="834" cy="300" r="26" fill="url(#accent)"/>
+  <use href="#play" x="822" y="288" width="24" height="24" color="#122743"/>
+  <rect x="1265" y="279" width="194" height="42" rx="10" fill="#242e3c" stroke="#354255"/>
+  <use href="#settings" x="1280" y="289" width="22" height="22" color="#e9edf5"/>
+  <text x="1310" y="305" fill="#e9edf5" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="550">30 WPM · Sound</text>
+  <use href="#more" x="1474" y="289" width="22" height="22" color="#d5ddea"/>
+
+  <!-- Option 2 -->
+  <text x="76" y="444" fill="#a4c7ff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="2">02 · TRACK-ALIGNED TIMELINE</text>
+  <text x="1524" y="444" text-anchor="end" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="12">Tie elapsed time to the text; let transport own the center</text>
+  <rect x="76" y="460" width="1448" height="210" rx="16" fill="#1a202a" stroke="#354255"/>
+  <text x="112" y="523" fill="#eef2f8" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="650">03 Reisen til Island</text>
+  <text x="112" y="544" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="12">Norwegian · Chapter 3 of 6</text>
+  <rect x="112" y="570" width="350" height="4" rx="2" fill="#39465b"/>
+  <rect x="112" y="570" width="65" height="4" rx="2" fill="#a4c7ff"/>
+  <circle cx="177" cy="572" r="4" fill="#a4c7ff"/>
+  <text x="112" y="592" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">0:00:06</text>
+  <text x="462" y="592" text-anchor="end" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">1:01:56</text>
+  <text x="870" y="522" text-anchor="middle" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">Paused</text>
+  <circle cx="798" cy="566" r="22" fill="#242e3c" stroke="#354255"/>
+  <use href="#stop" x="787" y="555" width="22" height="22" color="#d5ddea"/>
+  <circle cx="870" cy="566" r="27" fill="url(#accent)"/>
+  <use href="#play" x="858" y="554" width="24" height="24" color="#122743"/>
+  <rect x="934" y="544" width="44" height="44" rx="22" fill="#242e3c" stroke="#354255"/>
+  <path d="M6 18l8.5-6L6 6v12zm9-12v12h3V6h-3z" transform="translate(944 555)" fill="#d5ddea"/>
+  <rect x="1265" y="545" width="194" height="42" rx="10" fill="#242e3c" stroke="#354255"/>
+  <use href="#settings" x="1280" y="555" width="22" height="22" color="#e9edf5"/>
+  <text x="1310" y="571" fill="#e9edf5" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="550">30 WPM · Sound</text>
+  <use href="#more" x="1474" y="555" width="22" height="22" color="#d5ddea"/>
+
+  <!-- Option 3 -->
+  <text x="76" y="719" fill="#a4c7ff" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" letter-spacing="2">03 · FLOATING MINI-PLAYER</text>
+  <text x="1524" y="719" text-anchor="end" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="12">Make the player feel like one compact, self-contained surface</text>
+  <rect x="76" y="735" width="1448" height="240" rx="16" fill="#151a22" stroke="#293545"/>
+  <rect x="245" y="757" width="1110" height="196" rx="16" fill="#202936" stroke="#43536a" filter="url(#shadow)"/>
+  <rect x="530" y="779" width="540" height="4" rx="2" fill="#39465b"/>
+  <rect x="530" y="779" width="102" height="4" rx="2" fill="#a4c7ff"/>
+  <circle cx="632" cy="781" r="4" fill="#a4c7ff"/>
+  <text x="530" y="801" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">0:00:06</text>
+  <text x="1070" y="801" text-anchor="end" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">1:01:56</text>
+  <text x="287" y="856" fill="#eef2f8" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="650">03 Reisen til Island</text>
+  <text x="287" y="877" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="12">Norwegian · Chapter 3 of 6</text>
+  <text x="800" y="832" text-anchor="middle" fill="#9eacbf" font-family="Inter, system-ui, sans-serif" font-size="10">Paused</text>
+  <circle cx="762" cy="870" r="22" fill="#293647" stroke="#43536a"/>
+  <use href="#stop" x="751" y="859" width="22" height="22" color="#d5ddea"/>
+  <circle cx="828" cy="870" r="25" fill="url(#accent)"/>
+  <use href="#play" x="816" y="858" width="24" height="24" color="#122743"/>
+  <rect x="1070" y="849" width="170" height="40" rx="10" fill="#293647" stroke="#43536a"/>
+  <use href="#settings" x="1083" y="858" width="22" height="22" color="#e9edf5"/>
+  <text x="1112" y="874" fill="#e9edf5" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="550">30 WPM · Sound</text>
+  <use href="#more" x="1262" y="858" width="22" height="22" color="#d5ddea"/>
+
+  <text x="76" y="1010" fill="#74849b" font-family="Inter, system-ui, sans-serif" font-size="11">All concepts use matched 44–52 px transport targets, clear paused/playing status, and the existing blue accent.</text>
+</svg>

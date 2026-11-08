@@ -1,0 +1,12 @@
+{
+  "name": "CW Player",
+  "short_name": "CW Player",
+  "description": "Morse code listening and practice",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#12161d",
+  "theme_color": "#12161d",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

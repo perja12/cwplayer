@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#12161d" />
+    <meta name="description" content="A focused Morse code listening and practice player." />
+    <link
+      rel="preload"
+      href="/src/assets/fonts/literata-latin-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>CW Player</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="toast" role="status" class="toast" hidden></div>
+    <script src="/vendor/streamsaver/StreamSaver.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
