@@ -1,8 +1,12 @@
-import type { Settings, TextItem } from "./types";
+import { nansenCollection, nansenTexts } from "./nansen";
+import type { Collection, Settings, TextItem } from "./types";
 
 export const KEYS = { settings: "cw-player-v2-settings", theme: "cw-player-v2-theme" };
 export const WORD_FREQUENCY_LIMIT = 60;
 export const WORD_PREVIEW_GAP_SECONDS = 0.7;
+
+/** Bump when adding or changing bundled library content for existing libraries. */
+export const BUILT_IN_LIBRARY_VERSION = 1;
 
 export const defaultSettings: Settings = {
   wpm: 30,
@@ -20,7 +24,7 @@ export const defaultSettings: Settings = {
   secondFrequency: 0,
 };
 
-export const defaultTexts: TextItem[] = [
+const demoTexts: TextItem[] = [
   {
     id: "demo-qso",
     title: "A friendly QSO",
@@ -53,3 +57,6 @@ export const defaultTexts: TextItem[] = [
       "A quiet evening at the station. The receiver warmed slowly.\n\nOutside, the wind moved through the trees.",
   },
 ];
+
+export const defaultTexts: TextItem[] = [...demoTexts, ...nansenTexts];
+export const defaultCollections: Collection[] = [nansenCollection];

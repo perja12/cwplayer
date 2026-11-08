@@ -23,8 +23,9 @@ import {
   updateTheme,
 } from "../../src/app/app-store";
 import { resetPlaybackPosition, playbackStore } from "../../src/app/playback-store";
-import { KEYS, defaultSettings, defaultTexts } from "../../src/model/defaults";
+import { KEYS, defaultCollections, defaultSettings, defaultTexts } from "../../src/model/defaults";
 import { todayKey } from "../../src/model/format";
+import { NANSEN_COLLECTION_ID, NANSEN_COLLECTION_TITLE } from "../../src/model/nansen";
 import type { Settings } from "../../src/model/types";
 import { resetStores, sampleText } from "./helpers";
 
@@ -215,6 +216,18 @@ describe("defaults", () => {
   it("provides demo texts for a fresh install", () => {
     expect(defaultTexts.length).toBeGreaterThan(0);
     expect(defaultTexts.every((text) => text.content.length > 0)).toBe(true);
+  });
+
+  it("bundles the Nansen ski expedition as a ready-to-listen collection", () => {
+    const collection = defaultCollections.find((entry) => entry.id === NANSEN_COLLECTION_ID);
+    const chapters = defaultTexts.filter((text) => text.collectionId === NANSEN_COLLECTION_ID);
+
+    expect(collection?.title).toBe(NANSEN_COLLECTION_TITLE);
+    expect(collection?.itemIds).toHaveLength(15);
+    expect(collection?.itemIds).toEqual(chapters.map((text) => text.id));
+    expect(chapters.every((text) => text.content.length > 0)).toBe(true);
+    expect(chapters.every((text) => text.author === "Fridtjof Nansen")).toBe(true);
+    expect(chapters.every((text) => text.language === "Norwegian")).toBe(true);
   });
 });
 

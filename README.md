@@ -68,6 +68,8 @@ CW Player and its `cwtone` engine are free software under the **GNU General Publ
 
 The engine is a Rust/WebAssembly reimplementation inspired by **cwwav** by Thomas Horsten (M0TRN), Copyright © 2011–2014, licensed under GPL-3.0-or-later. The original project is at <https://gitlab.com/oyvholm/cwwav>. See [`NOTICE`](NOTICE) for the full attribution and modification notice.
 
+The bundled public-domain text of Fridtjof Nansen's _På ski over Grønland_ comes from the National Library of Norway's [Public Domain Texts from NBdigital](https://www.nb.no/sprakbanken/ressurskatalog/en/oai-nb-no-sbr-34/) corpus (CC0 1.0).
+
 Third-party components are listed in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md); the deployed copies are under `public/licenses/`. The app also exposes the license, source, and third-party notices from the Sound & timing dialog.
 
 ## Deployment

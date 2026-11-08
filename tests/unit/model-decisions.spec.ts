@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { mp3FileName } from "../../src/model/export";
 import {
+  addMissingBuiltIns,
   playableQueueTextIds,
   removeQueuedText,
   textDraftFromFormData,
@@ -17,7 +18,7 @@ import { normalizeSelectionText, selectionPopupPosition } from "../../src/model/
 import { settingsFromFormData } from "../../src/model/settings";
 import { decodeByteSpans } from "../../src/model/spans";
 import { defaultSettings } from "../../src/model/defaults";
-import type { PlaybackState, TextSpan } from "../../src/model/types";
+import type { Collection, PlaybackState, TextItem, TextSpan } from "../../src/model/types";
 
 const spans: TextSpan[] = [
   { startText: 0, endText: 2, startFrame: 10, endFrame: 20 },
@@ -137,6 +138,48 @@ describe("queue decisions", () => {
     expect(playableQueueTextIds(["a", "b", "c"], ["c", "a"])).toEqual(["a", "c"]);
     expect(playableQueueTextIds(["a", "a"], ["a"])).toEqual(["a", "a"]);
     expect(playableQueueTextIds([], ["a"])).toEqual([]);
+  });
+});
+
+describe("addMissingBuiltIns", () => {
+  const userText: TextItem = {
+    id: "user-text",
+    title: "My text",
+    author: "",
+    language: "",
+    labels: [],
+    content: "CQ",
+    collectionId: null,
+    lastPosition: 0,
+  };
+  const builtInText: TextItem = {
+    ...userText,
+    id: "built-in-text",
+    collectionId: "built-in-collection",
+  };
+  const builtInCollection: Collection = {
+    id: "built-in-collection",
+    title: "Built-in collection",
+    itemIds: [builtInText.id],
+  };
+
+  it("appends bundled texts and collections that are not in the library", () => {
+    const result = addMissingBuiltIns([userText], [], [userText, builtInText], [builtInCollection]);
+
+    expect(result.changed).toBe(true);
+    expect(result.texts).toEqual([userText, builtInText]);
+    expect(result.collections).toEqual([builtInCollection]);
+  });
+
+  it("leaves a library containing the bundled content untouched", () => {
+    const texts = [userText, builtInText];
+    const collections = [builtInCollection];
+
+    const result = addMissingBuiltIns(texts, collections, [builtInText], [builtInCollection]);
+
+    expect(result.changed).toBe(false);
+    expect(result.texts).toBe(texts);
+    expect(result.collections).toBe(collections);
   });
 });
 

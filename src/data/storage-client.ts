@@ -1,9 +1,12 @@
+import { BUILT_IN_LIBRARY_VERSION } from "../model/defaults";
+import { addMissingBuiltIns } from "../model/library";
 import type { PlayerData, PlayerDataDefaults } from "../model/types";
 
 const DB_NAME = "cw-player-library";
 const DB_VERSION = 1;
 const STORE = "records";
 const DATA_KEYS = ["texts", "collections", "marks", "log"] as const;
+const CATALOG_VERSION_KEY = "builtInLibraryVersion";
 type DataKey = (typeof DATA_KEYS)[number];
 
 function openDatabase(): Promise<IDBDatabase> {
@@ -47,6 +50,9 @@ export async function loadPlayerData(defaults: PlayerDataDefaults): Promise<Play
         ),
       ),
     );
+    const catalogRecord = await requestValue<{ key: string; value: unknown } | undefined>(
+      store.get(CATALOG_VERSION_KEY) as IDBRequest<{ key: string; value: unknown } | undefined>,
+    );
     const initial: PlayerData = {
       texts: defaults.texts,
       collections: defaults.collections,
@@ -57,8 +63,24 @@ export async function loadPlayerData(defaults: PlayerDataDefaults): Promise<Play
       DATA_KEYS.map((key, index) => [key, records[index]?.value ?? initial[key]]),
     ) as PlayerData;
     const missing = DATA_KEYS.filter((key, index) => records[index] === undefined);
+    const newLibrary = records.every((record) => record === undefined);
     if (missing.length)
       await savePlayerData(Object.fromEntries(missing.map((key) => [key, data[key]])));
+
+    const storedCatalogVersion = typeof catalogRecord?.value === "number" ? catalogRecord.value : 0;
+    if (storedCatalogVersion < BUILT_IN_LIBRARY_VERSION) {
+      const merged = addMissingBuiltIns(
+        data.texts,
+        data.collections,
+        defaults.texts,
+        defaults.collections,
+      );
+      data.texts = merged.texts;
+      data.collections = merged.collections;
+      if (merged.changed && !newLibrary)
+        await savePlayerData({ texts: data.texts, collections: data.collections });
+      await saveCatalogVersion(BUILT_IN_LIBRARY_VERSION);
+    }
     return data;
   } finally {
     database.close();
@@ -80,6 +102,23 @@ export async function savePlayerData(changes: Partial<PlayerData>): Promise<void
         reject(transaction.error ?? new Error("Could not save local data."));
       transaction.onabort = () =>
         reject(transaction.error ?? new Error("Saving local data was canceled."));
+    });
+  } finally {
+    database.close();
+  }
+}
+
+async function saveCatalogVersion(version: number): Promise<void> {
+  const database = await openDatabase();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const transaction = database.transaction(STORE, "readwrite");
+      transaction.objectStore(STORE).put({ key: CATALOG_VERSION_KEY, value: version });
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () =>
+        reject(transaction.error ?? new Error("Could not save the built-in library version."));
+      transaction.onabort = () =>
+        reject(transaction.error ?? new Error("Saving the built-in library version was canceled."));
     });
   } finally {
     database.close();

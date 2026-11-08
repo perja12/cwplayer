@@ -58,6 +58,31 @@ export function playableQueueTextIds(itemIds: readonly string[], availableIds: r
   return itemIds.filter((id) => available.has(id));
 }
 
+/**
+ * Add bundled texts and collections that are not in the user's library yet.
+ * Existing entries are left untouched, so removals and edits are preserved
+ * between built-in catalogue updates.
+ */
+export function addMissingBuiltIns(
+  texts: TextItem[],
+  collections: Collection[],
+  builtInTexts: readonly TextItem[],
+  builtInCollections: readonly Collection[],
+) {
+  const knownTexts = new Set(texts.map((text) => text.id));
+  const knownCollections = new Set(collections.map((collection) => collection.id));
+  const addedTexts = builtInTexts.filter((text) => !knownTexts.has(text.id));
+  const addedCollections = builtInCollections.filter(
+    (collection) => !knownCollections.has(collection.id),
+  );
+  if (!addedTexts.length && !addedCollections.length) return { texts, collections, changed: false };
+  return {
+    texts: [...texts, ...addedTexts],
+    collections: [...collections, ...addedCollections],
+    changed: true,
+  };
+}
+
 export type QueueEdit = { queue: PlaybackQueue | null; queueIndex: number };
 
 /**

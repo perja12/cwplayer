@@ -2,12 +2,12 @@ import { appStore } from "../../src/app/app-store";
 import { exportStore } from "../../src/app/export-store";
 import { playbackStore } from "../../src/app/playback-store";
 import { previewStore } from "../../src/app/preview-store";
-import { defaultSettings, defaultTexts } from "../../src/model/defaults";
+import { defaultCollections, defaultSettings, defaultTexts } from "../../src/model/defaults";
 import type { TextItem } from "../../src/model/types";
 
 export function resetStores() {
   appStore.texts = structuredClone(defaultTexts);
-  appStore.collections = [];
+  appStore.collections = structuredClone(defaultCollections);
   appStore.marks = [];
   appStore.log = {};
   appStore.settings = { ...defaultSettings };

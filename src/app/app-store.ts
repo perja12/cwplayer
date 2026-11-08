@@ -5,7 +5,7 @@ import {
   saveSettings as writeSettings,
   saveTheme as writeTheme,
 } from "../data/settings-client";
-import { defaultSettings, defaultTexts } from "../model/defaults";
+import { defaultCollections, defaultSettings, defaultTexts } from "../model/defaults";
 import { todayKey } from "../model/format";
 import type {
   Collection,
@@ -62,7 +62,7 @@ export function currentItem() {
 export async function hydrateStore() {
   const data = await loadPlayerData({
     texts: defaultTexts,
-    collections: [],
+    collections: defaultCollections,
     marks: [],
     log: {},
   });
