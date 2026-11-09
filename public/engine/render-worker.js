@@ -1,9 +1,17 @@
 let engine,
   channels,
   samples,
-  finished = false;
+  finished = false,
+  audioPort = null,
+  refillBlocks = 48;
 const BLOCK_FRAMES = 512;
-const REFILL_BLOCKS = 48;
+const PREBUFFER_SECONDS = 0.8;
+const REFILL_SECONDS = 1.2;
+
+function postAudio(message, transfer) {
+  if (audioPort) audioPort.postMessage(message, transfer ?? []);
+  else self.postMessage(message, transfer ?? []);
+}
 
 function fill(blocks) {
   for (let block = 0; block < blocks && !finished; block++) {
@@ -15,17 +23,24 @@ function fill(blocks) {
     }
     const pcm = new Float32Array(made * channels);
     for (let i = 0; i < pcm.length; i++) pcm[i] = samples[i] / 32768;
-    postMessage({ type: "block", pcm }, [pcm.buffer]);
+    postAudio({ type: "block", pcm }, [pcm.buffer]);
     if (engine.cw_stream_done()) {
       finished = true;
-      postMessage({ type: "end" });
+      postAudio({ type: "end" });
     }
   }
 }
 
 self.onmessage = (event) => {
   const message = event.data;
-  if (message.type === "start") {
+  if (message.type === "connect") {
+    // A private channel lets the worklet request refills without routing every
+    // block through the main thread.
+    audioPort = message.port;
+    audioPort.onmessage = (event) => {
+      if (event.data.type === "need") fill(refillBlocks);
+    };
+  } else if (message.type === "start") {
     try {
       engine = new WebAssembly.Instance(message.module, {}).exports;
       const s = message.settings;
@@ -100,9 +115,11 @@ self.onmessage = (event) => {
         engine.cw_stream_ptr(),
         BLOCK_FRAMES * channels,
       );
+      refillBlocks = Math.max(1, Math.ceil((s.rate * REFILL_SECONDS) / BLOCK_FRAMES));
+      const prebufferBlocks = Math.max(1, Math.ceil((s.rate * PREBUFFER_SECONDS) / BLOCK_FRAMES));
       postMessage({ type: "started", frames: totalFrames, channels, resumeFrame });
       postMessage({ type: "spans", spans });
-      fill(REFILL_BLOCKS);
+      fill(prebufferBlocks);
     } catch (error) {
       postMessage({
         type: "error",
@@ -110,7 +127,7 @@ self.onmessage = (event) => {
       });
     }
   } else if (message.type === "fill" && !finished) {
-    fill(REFILL_BLOCKS);
+    fill(refillBlocks);
   } else if (message.type === "stop") {
     finished = true;
     close();

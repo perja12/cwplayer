@@ -27,9 +27,19 @@ let worker: Worker | null = null;
 let startFrame = 0;
 let lastPositionPersist = 0;
 let playbackRequest = 0;
+let progressFrame = 0;
 
 function setPlaybackState(state: typeof playbackStore.state) {
   playbackStore.state = state;
+}
+
+/** Coalesce progress messages so heavy transcript updates run at most once per frame. */
+function scheduleProgressRender() {
+  if (progressFrame) return;
+  progressFrame = requestAnimationFrame(() => {
+    progressFrame = 0;
+    requestProgressRender();
+  });
 }
 
 function positionItem() {
@@ -100,7 +110,7 @@ export async function startPlayback() {
   try {
     const engineModule = await getEngineModule();
     if (request !== playbackRequest) return;
-    audioContext ??= new AudioContext();
+    audioContext ??= new AudioContext({ latencyHint: "playback" });
     await audioContext.resume();
     if (request !== playbackRequest) return;
     if (!audioContext.audioWorklet || typeof AudioWorkletNode === "undefined")
@@ -137,7 +147,7 @@ export async function startPlayback() {
         );
         trackPosition();
         accountLog();
-        requestProgressRender();
+        scheduleProgressRender();
       } else if (message.type === "need") worker?.postMessage({ type: "fill" });
       else if (message.type === "done") {
         if (playbackStore.state !== "playing") return;
@@ -173,6 +183,12 @@ export async function startPlayback() {
         void stopPlayback(false);
       }
     };
+    // Give the worker and the worklet a private channel. Buffer refills then
+    // bypass the main thread entirely, so transcript rendering cannot starve
+    // the audio queue.
+    const channel = new MessageChannel();
+    thisWorklet.port.postMessage({ type: "connect", port: channel.port1 }, [channel.port1]);
+    thisWorker.postMessage({ type: "connect", port: channel.port2 }, [channel.port2]);
     const text = new TextEncoder().encode(item.content);
     const savedPosition = item.lastPosition ?? 0;
     const startByte = savedPosition > 0 ? byteOffsetAt(item.content, savedPosition) : 0;
@@ -212,6 +228,10 @@ export async function resumePlayback() {
 
 export async function stopPlayback(redraw = true, invalidate = true) {
   if (invalidate) playbackRequest++;
+  if (progressFrame) {
+    cancelAnimationFrame(progressFrame);
+    progressFrame = 0;
+  }
   stopAllPreviews(false);
   // Stopping keeps the listening position, so it behaves like a pause across sessions.
   trackPosition(true);

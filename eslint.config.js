@@ -43,6 +43,7 @@ export default tseslint.config(
         ...globals.worker,
         AudioWorkletProcessor: "readonly",
         registerProcessor: "readonly",
+        sampleRate: "readonly",
         WasmMediaEncoder: "readonly",
       },
     },
