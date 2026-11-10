@@ -5,6 +5,7 @@ import {
   saveSettings as writeSettings,
   saveTheme as writeTheme,
 } from "../data/settings-client";
+import { loadSession, saveSession } from "../data/session-client";
 import { defaultCollections, defaultSettings, defaultTexts } from "../model/defaults";
 import { todayKey } from "../model/format";
 import type {
@@ -70,8 +71,15 @@ export async function hydrateStore() {
   appStore.collections = data.collections;
   appStore.marks = data.marks;
   appStore.log = data.log;
-  appStore.activeTextId = appStore.texts[0]?.id ?? "";
+  const rememberedText = appStore.texts.find((item) => item.id === loadSession().activeTextId);
+  appStore.activeTextId = rememberedText?.id ?? appStore.texts[0]?.id ?? "";
   appStore.frequencyTextId = appStore.activeTextId;
+}
+
+/** Select the track that should be restored on the next launch. */
+export function setActiveText(id: string) {
+  appStore.activeTextId = id;
+  saveSession({ activeTextId: id });
 }
 
 export function persistLibrary() {

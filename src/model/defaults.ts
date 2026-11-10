@@ -1,7 +1,11 @@
 import { nansenCollection, nansenTexts } from "./nansen";
 import type { Collection, Settings, TextItem } from "./types";
 
-export const KEYS = { settings: "cw-player-v2-settings", theme: "cw-player-v2-theme" };
+export const KEYS = {
+  settings: "cw-player-v2-settings",
+  theme: "cw-player-v2-theme",
+  session: "cw-player-v2-session",
+};
 export const WORD_FREQUENCY_LIMIT = 60;
 export const WORD_PREVIEW_GAP_SECONDS = 0.7;
 

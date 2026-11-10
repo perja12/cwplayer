@@ -27,6 +27,22 @@ test.describe("listening position", () => {
     await expect.poll(() => elapsedSeconds(page)).toBeLessThan(3);
   });
 
+  test("restores the last played track after reloading", async ({ page }) => {
+    await openApp(page);
+    await page.locator('[data-nav="library"]').click();
+    const row = page.locator(".text-row", { hasText: "Call signs from the weekend" });
+    await row.locator("[data-play]").click();
+    await expect(page.locator('[data-transport="toggle"]')).toHaveAttribute("aria-label", "Pause", {
+      timeout: 15_000,
+    });
+    await page.locator('[data-transport="stop"]').click();
+    await expect(page.locator('[data-transport="toggle"]')).toHaveAttribute("aria-label", "Play");
+
+    await page.reload();
+
+    await expect(page.locator(".main-view h1")).toHaveText("Call signs from the weekend");
+  });
+
   test("resumes deep into a long text without re-rendering the prefix", async ({ page }) => {
     await openApp(page);
     const content =

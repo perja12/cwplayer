@@ -18,6 +18,7 @@ import {
   persistLibrary,
   persistLog,
   persistTexts,
+  setActiveText,
   setInstallPrompt,
   updateSettings,
   updateTheme,
@@ -66,6 +67,50 @@ describe("hydrateStore", () => {
 
     expect(appStore.activeTextId).toBe("");
     expect(appStore.frequencyTextId).toBe("");
+  });
+
+  it("restores the last played track from the session", async () => {
+    storage.load.mockResolvedValue({
+      texts: [sampleText({ id: "first" }), sampleText({ id: "second" })],
+      collections: [],
+      marks: [],
+      log: {},
+    });
+    localStorage.setItem(KEYS.session, JSON.stringify({ activeTextId: "second" }));
+
+    await hydrateStore();
+
+    expect(appStore.activeTextId).toBe("second");
+    expect(appStore.frequencyTextId).toBe("second");
+  });
+
+  it("falls back to the first text when the saved track is gone", async () => {
+    storage.load.mockResolvedValue({
+      texts: [sampleText({ id: "first" })],
+      collections: [],
+      marks: [],
+      log: {},
+    });
+    localStorage.setItem(KEYS.session, JSON.stringify({ activeTextId: "removed" }));
+
+    await hydrateStore();
+
+    expect(appStore.activeTextId).toBe("first");
+    expect(appStore.frequencyTextId).toBe("first");
+  });
+
+  it("ignores malformed session data", async () => {
+    storage.load.mockResolvedValue({
+      texts: [sampleText({ id: "first" })],
+      collections: [],
+      marks: [],
+      log: {},
+    });
+    localStorage.setItem(KEYS.session, "not json");
+
+    await hydrateStore();
+
+    expect(appStore.activeTextId).toBe("first");
   });
 
   it("propagates storage failures to the bootstrap", async () => {
@@ -192,6 +237,13 @@ describe("preferences", () => {
     updateTheme("light");
     expect(appStore.theme).toBe("light");
     expect(localStorage.getItem(KEYS.theme)).toBe('"light"');
+  });
+
+  it("remembers the selected track in the session", () => {
+    setActiveText("second");
+
+    expect(appStore.activeTextId).toBe("second");
+    expect(JSON.parse(localStorage.getItem(KEYS.session)!)).toEqual({ activeTextId: "second" });
   });
 
   it("accumulates listening time for today", () => {

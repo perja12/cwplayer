@@ -4,6 +4,7 @@ import {
   currentItem,
   persistLog,
   persistTexts,
+  setActiveText,
 } from "../app/app-store";
 import { exportStore } from "../app/export-store";
 import { playbackStore, resetPlaybackPosition } from "../app/playback-store";
@@ -86,7 +87,7 @@ async function advanceQueue() {
   );
   if (nextIndex < 0) return false;
   appStore.queueIndex = nextIndex;
-  appStore.activeTextId = appStore.playbackQueue.textIds[appStore.queueIndex];
+  setActiveText(appStore.playbackQueue.textIds[appStore.queueIndex]);
   resetPlaybackPosition();
   await startPlayback();
   return true;

@@ -1,4 +1,4 @@
-import { appStore, persistLibrary } from "../app/app-store";
+import { appStore, persistLibrary, setActiveText } from "../app/app-store";
 import { resetPlaybackPosition } from "../app/playback-store";
 import { stopPlayback } from "../audio/playback-controller";
 import { requestRender } from "../app/render-bus";
@@ -387,7 +387,7 @@ function openRemoveDialog(id: string) {
         (collection) => (collection.itemIds = collection.itemIds.filter((textId) => textId !== id)),
       );
       if (wasActive) {
-        appStore.activeTextId = appStore.texts[0]?.id ?? "";
+        setActiveText(appStore.texts[0]?.id ?? "");
         resetPlaybackPosition();
       }
       persistLibrary();

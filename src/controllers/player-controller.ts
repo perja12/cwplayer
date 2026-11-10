@@ -1,4 +1,10 @@
-import { appStore, currentItem, persistLibrary, persistTexts } from "../app/app-store";
+import {
+  appStore,
+  currentItem,
+  persistLibrary,
+  persistTexts,
+  setActiveText,
+} from "../app/app-store";
 import { playbackStore, resetPlaybackPosition } from "../app/playback-store";
 import { previewStore } from "../app/preview-store";
 import { requestRender } from "../app/render-bus";
@@ -151,7 +157,7 @@ async function toggleCollectionPlayback(collectionId: string) {
 async function startText(id: string) {
   await stopPlayback(false);
   appStore.playbackQueue = null;
-  appStore.activeTextId = id;
+  setActiveText(id);
   resetPlaybackPosition();
   requestRender();
   await startPlayback();
@@ -170,7 +176,7 @@ async function startCollection(collectionId: string) {
   await stopPlayback(false);
   appStore.playbackQueue = { collectionId, textIds };
   appStore.queueIndex = 0;
-  appStore.activeTextId = textIds[appStore.queueIndex];
+  setActiveText(textIds[appStore.queueIndex]);
   resetPlaybackPosition();
   requestRender();
   await startPlayback();
@@ -186,7 +192,7 @@ async function stepQueue(offset: number) {
   if (nextIndex === null) return;
   await stopPlayback(false);
   appStore.queueIndex = nextIndex;
-  appStore.activeTextId = appStore.playbackQueue.textIds[appStore.queueIndex];
+  setActiveText(appStore.playbackQueue.textIds[appStore.queueIndex]);
   resetPlaybackPosition();
   await startPlayback();
 }
