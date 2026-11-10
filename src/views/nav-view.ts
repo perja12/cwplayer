@@ -17,5 +17,5 @@ export function renderNav() {
     )
     .join(
       "",
-    )}<button class="nav-item settings-item" data-open-settings data-menu-close>${icon("settings")}<span>Settings</span></button></nav><div class="sidebar-note"><button class="sidebar-action theme-toggle">${icon(appStore.theme === "dark" ? "sun" : "moon")}<span>${themeLabel}</span></button><button class="install-app" data-install-app ${appStore.installPrompt ? "" : "hidden"}>Install CW Player</button><button class="sidebar-action reload-app" data-reload-app>${icon("downloadForOffline")} Reload App</button></div></aside>`;
+    )}<button class="nav-item settings-item" data-open-settings data-menu-close>${icon("settings")}<span>Settings</span></button></nav><div class="sidebar-note"><button class="sidebar-action theme-toggle">${icon(appStore.theme === "dark" ? "sun" : "moon")}<span>${themeLabel}</span></button><button class="install-app" data-install-app>${icon("downloadForOffline")}<span>Install CW Player</span></button><button class="sidebar-action reload-app" data-reload-app>${icon("refresh")}<span>Reload App</span></button></div></aside>`;
 }

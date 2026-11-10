@@ -205,7 +205,9 @@ select:focus-visible {
   line-height: 1.5;
 }
 .install-app {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 9px;
   width: 100%;
   margin-top: 6px;
   padding: 9px 12px;
@@ -221,8 +223,9 @@ select:focus-visible {
   border-color: var(--accent);
   color: var(--accent);
 }
-.install-app[hidden] {
-  display: none;
+.install-app .material-icon {
+  width: 18px;
+  height: 18px;
 }
 .main-view {
   height: calc(100% - 128px);

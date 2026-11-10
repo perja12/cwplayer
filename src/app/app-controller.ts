@@ -11,6 +11,7 @@ import {
 } from "../controllers/selection-controller";
 import { bindSettingsEvents } from "../controllers/settings-controller";
 import { applyTheme } from "../ui/theme";
+import { showToast } from "../ui/toast";
 import { renderShell } from "../views/app-view";
 import { renderPlayerProgress } from "../views/player-progress-view";
 
@@ -103,7 +104,14 @@ function bindNavEvents() {
     requestRender();
   });
   document.querySelector<HTMLButtonElement>("[data-install-app]")?.addEventListener("click", () => {
-    if (!appStore.installPrompt) return;
+    if (!appStore.installPrompt) {
+      showToast(
+        window.matchMedia("(display-mode: standalone)").matches
+          ? "CW Player is already installed."
+          : "Open your browser menu to install CW Player.",
+      );
+      return;
+    }
     const prompt = appStore.installPrompt;
     void (async () => {
       await prompt.prompt();

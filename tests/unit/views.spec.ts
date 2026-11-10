@@ -40,11 +40,10 @@ describe("navigation view", () => {
 
   it("shows the theme action, install action, and reload action", () => {
     appStore.theme = "dark";
-    const hiddenInstall = render(renderNav());
-    expect(hiddenInstall.querySelector("[data-install-app]")?.hasAttribute("hidden")).toBe(true);
-    expect(hiddenInstall.querySelector(".sidebar-note .theme-toggle")).not.toBeNull();
-    expect(hiddenInstall.querySelector(".theme-toggle")?.textContent).toContain("Light Theme");
-    expect(hiddenInstall.querySelector(".theme-toggle path")?.getAttribute("d")).toBe(
+    const darkTheme = render(renderNav());
+    expect(darkTheme.querySelector(".sidebar-note .theme-toggle")).not.toBeNull();
+    expect(darkTheme.querySelector(".theme-toggle")?.textContent).toContain("Light Theme");
+    expect(darkTheme.querySelector(".theme-toggle path")?.getAttribute("d")).toBe(
       render(icon("sun")).querySelector("path")?.getAttribute("d"),
     );
 
@@ -54,16 +53,19 @@ describe("navigation view", () => {
     expect(lightTheme.querySelector(".theme-toggle path")?.getAttribute("d")).toBe(
       render(icon("moon")).querySelector("path")?.getAttribute("d"),
     );
+  });
 
-    appStore.installPrompt = {
-      prompt: () => Promise.resolve(),
-      userChoice: Promise.resolve({ outcome: "accepted" }),
-    } as never;
-    const visibleInstall = render(renderNav());
-    expect(visibleInstall.querySelector("[data-install-app]")?.hasAttribute("hidden")).toBe(false);
-    expect(visibleInstall.querySelector("[data-reload-app]")?.textContent).toContain("Reload App");
-    expect(visibleInstall.querySelector("[data-reload-app] path")?.getAttribute("d")).toBe(
+  it("always shows the install action with the download icon and reload with the refresh icon", () => {
+    const view = render(renderNav());
+
+    expect(view.querySelector("[data-install-app]")?.hasAttribute("hidden")).toBe(false);
+    expect(view.querySelector("[data-install-app]")?.textContent).toContain("Install CW Player");
+    expect(view.querySelector("[data-install-app] path")?.getAttribute("d")).toBe(
       render(icon("downloadForOffline")).querySelector("path")?.getAttribute("d"),
+    );
+    expect(view.querySelector("[data-reload-app]")?.textContent).toContain("Reload App");
+    expect(view.querySelector("[data-reload-app] path")?.getAttribute("d")).toBe(
+      render(icon("refresh")).querySelector("path")?.getAttribute("d"),
     );
   });
 });
