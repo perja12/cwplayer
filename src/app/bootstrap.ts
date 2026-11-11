@@ -1,5 +1,5 @@
 import { renderApp } from "./app-controller";
-import { appStore, hydrateStore, setInstallPrompt } from "./app-store";
+import { appStore, hydrateStore, primeStore, setInstallPrompt } from "./app-store";
 import { setRenderers } from "./render-bus";
 import { initSelectionController } from "../controllers/selection-controller";
 import { escapeHtml } from "../ui/html";
@@ -11,15 +11,25 @@ import type { InstallPromptEvent } from "../model/types";
 const app = document.querySelector<HTMLDivElement>("#app")!;
 
 export async function bootstrap() {
-  try {
-    await hydrateStore();
-  } catch (error) {
-    app.innerHTML = `<main class="storage-error"><h1>CW Player could not open local storage</h1><p>${escapeHtml(error instanceof Error ? error.message : String(error))}</p><p>Check that this site is allowed to use IndexedDB, then reload.</p></main>`;
-    return;
-  }
+  // Start reading the stored library right away, but paint the bundled shell
+  // while IndexedDB opens instead of leaving the screen blank.
+  const hydration = hydrateStore();
+  const canRenderEarly = primeStore();
   applyTheme(appStore.theme);
   initSelectionController();
   setRenderers(renderApp, renderPlayerProgress);
+  if (canRenderEarly) {
+    app.inert = true;
+    renderApp();
+  }
+  try {
+    await hydration;
+  } catch (error) {
+    app.inert = false;
+    app.innerHTML = `<main class="storage-error"><h1>CW Player could not open local storage</h1><p>${escapeHtml(error instanceof Error ? error.message : String(error))}</p><p>Check that this site is allowed to use IndexedDB, then reload.</p></main>`;
+    return;
+  }
+  app.inert = false;
   renderApp();
   if ("serviceWorker" in navigator && import.meta.env.PROD)
     await Promise.all([

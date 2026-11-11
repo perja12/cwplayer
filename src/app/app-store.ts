@@ -60,6 +60,11 @@ export function currentItem() {
   return appStore.texts.find((item) => item.id === appStore.activeTextId) ?? appStore.texts[0];
 }
 
+/** The remembered track when it is still available, otherwise the first text. */
+function restoreTextId(texts: TextItem[], rememberedId: string | undefined) {
+  return texts.find((item) => item.id === rememberedId)?.id ?? texts[0]?.id ?? "";
+}
+
 export async function hydrateStore() {
   const data = await loadPlayerData({
     texts: defaultTexts,
@@ -71,9 +76,23 @@ export async function hydrateStore() {
   appStore.collections = data.collections;
   appStore.marks = data.marks;
   appStore.log = data.log;
-  const rememberedText = appStore.texts.find((item) => item.id === loadSession().activeTextId);
-  appStore.activeTextId = rememberedText?.id ?? appStore.texts[0]?.id ?? "";
+  appStore.activeTextId = restoreTextId(appStore.texts, loadSession().activeTextId);
   appStore.frequencyTextId = appStore.activeTextId;
+}
+
+/**
+ * Fill the store with bundled defaults before IndexedDB resolves so the first
+ * paint can happen immediately. Returns false when the remembered track is not
+ * bundled: a custom text can only be restored after hydration, so the caller
+ * should keep the boot splash up instead of showing the wrong text.
+ */
+export function primeStore() {
+  appStore.texts = defaultTexts;
+  appStore.collections = defaultCollections;
+  const rememberedId = loadSession().activeTextId;
+  appStore.activeTextId = restoreTextId(defaultTexts, rememberedId);
+  appStore.frequencyTextId = appStore.activeTextId;
+  return !rememberedId || defaultTexts.some((item) => item.id === rememberedId);
 }
 
 /** Select the track that should be restored on the next launch. */

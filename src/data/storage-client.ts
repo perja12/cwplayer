@@ -43,16 +43,18 @@ export async function loadPlayerData(defaults: PlayerDataDefaults): Promise<Play
   try {
     const transaction = database.transaction(STORE, "readonly");
     const store = transaction.objectStore(STORE);
-    const records = await Promise.all(
-      DATA_KEYS.map((key) =>
-        requestValue<{ key: DataKey; value: unknown } | undefined>(
-          store.get(key) as IDBRequest<{ key: DataKey; value: unknown } | undefined>,
+    const [records, catalogRecord] = await Promise.all([
+      Promise.all(
+        DATA_KEYS.map((key) =>
+          requestValue<{ key: DataKey; value: unknown } | undefined>(
+            store.get(key) as IDBRequest<{ key: DataKey; value: unknown } | undefined>,
+          ),
         ),
       ),
-    );
-    const catalogRecord = await requestValue<{ key: string; value: unknown } | undefined>(
-      store.get(CATALOG_VERSION_KEY) as IDBRequest<{ key: string; value: unknown } | undefined>,
-    );
+      requestValue<{ key: string; value: unknown } | undefined>(
+        store.get(CATALOG_VERSION_KEY) as IDBRequest<{ key: string; value: unknown } | undefined>,
+      ),
+    ]);
     const initial: PlayerData = {
       texts: defaults.texts,
       collections: defaults.collections,

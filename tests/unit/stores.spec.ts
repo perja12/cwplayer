@@ -18,6 +18,7 @@ import {
   persistLibrary,
   persistLog,
   persistTexts,
+  primeStore,
   setActiveText,
   setInstallPrompt,
   updateSettings,
@@ -120,6 +121,43 @@ describe("hydrateStore", () => {
   });
 });
 
+describe("primeStore", () => {
+  it("paints bundled defaults with the remembered bundled track", () => {
+    const remembered = defaultTexts[1];
+    localStorage.setItem(KEYS.session, JSON.stringify({ activeTextId: remembered.id }));
+
+    expect(primeStore()).toBe(true);
+
+    expect(appStore.texts).toEqual(defaultTexts);
+    expect(appStore.collections).toEqual(defaultCollections);
+    expect(appStore.activeTextId).toBe(remembered.id);
+    expect(appStore.frequencyTextId).toBe(remembered.id);
+  });
+
+  it("falls back to the first bundled text without a session", () => {
+    expect(primeStore()).toBe(true);
+
+    expect(appStore.activeTextId).toBe(defaultTexts[0].id);
+    expect(appStore.frequencyTextId).toBe(defaultTexts[0].id);
+  });
+
+  it("defers the first paint when the remembered track is not bundled", () => {
+    localStorage.setItem(KEYS.session, JSON.stringify({ activeTextId: "imported-track" }));
+
+    expect(primeStore()).toBe(false);
+
+    expect(appStore.activeTextId).toBe(defaultTexts[0].id);
+  });
+
+  it("treats a malformed session as having no remembered track", () => {
+    localStorage.setItem(KEYS.session, "not json");
+
+    expect(primeStore()).toBe(true);
+
+    expect(appStore.activeTextId).toBe(defaultTexts[0].id);
+  });
+});
+
 describe("currentItem", () => {
   it("prefers the active id and falls back to the first text", () => {
     appStore.texts = [sampleText({ id: "a" }), sampleText({ id: "b" })];
@@ -197,6 +235,16 @@ describe("persistence", () => {
 
     await vi.waitFor(() =>
       expect(toast).toHaveBeenCalledWith("Could not save the listening position: quota exceeded"),
+    );
+  });
+
+  it("stringifies non-Error listening-position failures", async () => {
+    storage.save.mockRejectedValueOnce("plain failure");
+
+    persistTexts();
+
+    await vi.waitFor(() =>
+      expect(toast).toHaveBeenCalledWith("Could not save the listening position: plain failure"),
     );
   });
 
