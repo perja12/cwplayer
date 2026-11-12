@@ -2,8 +2,48 @@ import { expect, type Page } from "@playwright/test";
 
 export async function openApp(page: Page) {
   await page.goto("/");
+  // The bundled shell paints before IndexedDB resolves and is replaced by the
+  // hydrated render. Wait for that hand-off before interacting so selections
+  // and clicks cannot land on the provisional DOM.
+  await expect(page.locator("#app")).not.toHaveAttribute("inert");
   await expect(page.locator("#transcript")).toBeVisible();
   await expect(page.locator("#transcript")).not.toBeEmpty();
+}
+
+/**
+ * Delay the IndexedDB handshake so tests can observe the provisional render.
+ * Sets `window.__libraryLoaded` once the delayed request finally resolves.
+ */
+export async function delayLibraryOpen(page: Page, delayMs = 3_000) {
+  await page.addInitScript((delay) => {
+    const state = window as unknown as { __libraryLoaded?: boolean };
+    state.__libraryLoaded = false;
+    const open = indexedDB.open.bind(indexedDB);
+    indexedDB.open = (name: string, version?: number) => {
+      const request = open(name, version);
+      let handler: ((this: IDBRequest, event: Event) => unknown) | null = null;
+      Object.defineProperty(request, "onsuccess", {
+        configurable: true,
+        get: () => handler,
+        set: (value: (this: IDBRequest, event: Event) => unknown) => {
+          handler = value;
+          request.addEventListener("success", (event) => {
+            setTimeout(() => {
+              state.__libraryLoaded = true;
+              value.call(request, event);
+            }, delay);
+          });
+        },
+      });
+      return request;
+    };
+  }, delayMs);
+}
+
+export function libraryLoaded(page: Page) {
+  return page.evaluate(
+    () => (window as unknown as { __libraryLoaded?: boolean }).__libraryLoaded ?? true,
+  );
 }
 
 export async function openSoundSettings(page: Page) {

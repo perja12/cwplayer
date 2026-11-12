@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {
+  delayLibraryOpen,
   elapsedLabel,
   openApp,
   pausePlayback,
@@ -9,6 +10,14 @@ import {
 } from "./helpers";
 
 test.describe("Follow along selection preview", () => {
+  test("waits for the hydrated render before offering a selection", async ({ page }) => {
+    await delayLibraryOpen(page, 1_500);
+
+    await openApp(page);
+    await selectTranscriptRange(page, 0, 2);
+    await expect(page.locator(".selection-play-popup")).toBeVisible();
+  });
+
   test("is offered only when main playback is idle or paused", async ({ page }) => {
     await openApp(page);
     const popup = page.locator(".selection-play-popup");
