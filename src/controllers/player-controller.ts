@@ -229,14 +229,15 @@ async function startOver() {
   await startPlayback();
 }
 
-function markWordRecognized() {
+/** Mark the word at the playback position. Returns true when a mark was added. */
+export function markWordRecognized() {
   const item = currentItem();
-  if (!item || playbackStore.state !== "playing") return;
+  if (!item || playbackStore.state !== "playing") return false;
   const textPosition = textPositionAtFrame(playbackStore.spans, playbackStore.consumedFrames);
   const mark = markFromPosition(item.content, textPosition);
   if (!mark) {
     showToast("No word at the current position");
-    return;
+    return false;
   }
   appStore.marks.push({
     id: uid(),
@@ -256,4 +257,5 @@ function markWordRecognized() {
       requestRender();
     }
   }, 600);
+  return true;
 }

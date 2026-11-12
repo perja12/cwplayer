@@ -1,6 +1,7 @@
 import { appStore, updateTheme } from "./app-store";
 import { exportStore } from "./export-store";
 import { requestRender } from "./render-bus";
+import { bindHidControls } from "../controllers/hid-controller";
 import { bindLibraryEvents } from "../controllers/library-controller";
 import { go } from "../controllers/navigation-controller";
 import { bindPlayerEvents } from "../controllers/player-controller";
@@ -49,6 +50,7 @@ export function renderApp() {
   bindNavEvents();
   bindLibraryEvents();
   bindPlayerEvents();
+  bindHidControls();
   bindReviewEvents();
   bindSettingsEvents();
   bindSelectionSurfaceEvents();
