@@ -37,28 +37,32 @@ pnpm preview --port 4173
 
 Open `http://localhost:4173/`, wait for the page to finish loading once, and then use the browser's install command (or the in-app Install button when the browser offers it). The production build generates a versioned service worker that precaches the app, audio engine, and MP3 encoder. After the first successful load, the app shell and playback engine are available offline. Library texts, marks, settings, and listening time are stored locally in IndexedDB/local storage.
 
-## External HID controls
+## MIDI word-recognition switch
 
-You can drive **Word recognized** from a USB HID device (for example a
-Raspberry Pi Pico programmed as a keyboard). While playback is running, the app
-listens for these physical keys:
+You can drive **Word recognized** from a USB MIDI device such as a Raspberry Pi
+Pico programmed as a Vail Adapter-compatible MIDI keyer. While playback is
+running, any MIDI **Note On** from a connected input adds the word at the current
+playback position to Practice Review, exactly like the button in the player dock.
+Note Off messages, held notes, and auto-repeat do not add duplicate marks.
 
-- left and right `Control`
-- `A`, `S`, `Z`, `X`
-- `Space`
+The app uses the Web MIDI API. On first use the browser asks for MIDI permission;
+allow it for the player's origin. Chrome/Edge on desktop and current Chrome on
+Android are supported.
 
-Each press adds the word at the current playback position to Practice Review,
-exactly like the button in the player dock. The keys are ignored while typing in
-a form field or while a dialog is open, and key auto-repeat does not add
-duplicate marks.
+On connection the app sends the Vail Adapter initialization sequence to every
+MIDI output:
 
-The keys only work while the app/tab is focused and the device is awake. When a
-phone or tablet turns its screen off, the operating system normally suspends the
-browser and stops delivering key events, so a web app cannot receive HID presses
-with the screen truly off. On a desktop where only the monitor sleeps, the
-events still arrive as long as the computer and browser stay awake. To use the
-controller with the display dark on mobile, keep the device awake (for example
-with a kiosk setting or a screen wake lock) rather than letting it sleep.
+```
+B0 00 00   MIDI mode (disable keyboard/HID events)
+B0 01 32   100 ms dit (~12 WPM)
+C0 00      passthrough keyer mode
+```
+
+The sequence is sent again whenever a MIDI device is connected or reconnected.
+The adapter must expose a USB MIDI output/input pair; a pure USB HID keyboard is
+not enough. On Android, MIDI note events continue to reach Chrome while the
+screen is off and the device is locked, which is why MIDI is used instead of
+keyboard HID events.
 
 ## Checks and end-to-end tests
 

@@ -87,17 +87,17 @@ written to `coverage/` (ignored by Git). Coverage is part of `pnpm check`, so
 
 The current seam map:
 
-| Layer                                 | Unit coverage | How it is verified                                                                                  |
-| ------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------- |
-| `src/model/`                          | ~100%         | Vitest in a node environment                                                                        |
-| `src/ui/`                             | ~100%         | Vitest with jsdom shims                                                                             |
-| `src/views/`                          | ~100%         | Render functions asserted with jsdom                                                                |
-| `src/app/*-store.ts`                  | ~100%         | Vitest with mocked storage clients                                                                  |
-| `src/app/render-bus.ts`               | ~100%         | Direct renderer spies                                                                               |
-| `src/controllers/`                    | low           | Playwright user flows; MP3 export progress and timeout states unit-tested                           |
-| `src/audio/`                          | low           | Playwright playback and preview flows                                                               |
-| `src/data/`                           | mixed         | `settings-client` unit-tested; IndexedDB, images, StreamSaver via Playwright or manual verification |
-| `src/app/bootstrap.ts`, `src/main.ts` | 0%            | Playwright boots the built app                                                                      |
+| Layer                                 | Unit coverage | How it is verified                                                                                                    |
+| ------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `src/model/`                          | ~100%         | Vitest in a node environment                                                                                          |
+| `src/ui/`                             | ~100%         | Vitest with jsdom shims                                                                                               |
+| `src/views/`                          | ~100%         | Render functions asserted with jsdom                                                                                  |
+| `src/app/*-store.ts`                  | ~100%         | Vitest with mocked storage clients                                                                                    |
+| `src/app/render-bus.ts`               | ~100%         | Direct renderer spies                                                                                                 |
+| `src/controllers/`                    | low           | Playwright user flows; MP3 export progress and timeout states unit-tested                                             |
+| `src/audio/`                          | low           | Playwright playback and preview flows                                                                                 |
+| `src/data/`                           | mixed         | `settings-client` and `midi-client` unit-tested; IndexedDB, images, StreamSaver via Playwright or manual verification |
+| `src/app/bootstrap.ts`, `src/main.ts` | 0%            | Playwright boots the built app                                                                                        |
 
 This split is intentional. Views are pure HTML builders, stores are plain state,
 and the model is independent, so they can be tested directly. Feature

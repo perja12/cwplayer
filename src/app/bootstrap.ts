@@ -2,6 +2,7 @@ import { renderApp } from "./app-controller";
 import { appStore, hydrateStore, primeStore, setInstallPrompt } from "./app-store";
 import { setRenderers } from "./render-bus";
 import { initSelectionController } from "../controllers/selection-controller";
+import { bindMidiControls } from "../controllers/midi-controller";
 import { escapeHtml } from "../ui/html";
 import { applyTheme } from "../ui/theme";
 import { showToast } from "../ui/toast";
@@ -31,6 +32,7 @@ export async function bootstrap() {
   }
   app.inert = false;
   renderApp();
+  bindMidiControls();
   if ("serviceWorker" in navigator && import.meta.env.PROD)
     await Promise.all([
       navigator.serviceWorker
